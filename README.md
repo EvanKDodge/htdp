@@ -1,2 +1,2 @@
 # htdp
-Excercises for HTDP (2nd Ed)
+Excercises for HTDP (2nd Ed.)
