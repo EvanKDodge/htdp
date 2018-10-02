@@ -8,8 +8,9 @@
  
 (define WIDTH 300) ; distances in terms of pixels 
 (define HEIGHT 100)
-(define CLOSE (- HEIGHT (/ HEIGHT 3)))
-(define X (/ WIDTH 2))
+(define CLOSE (/ HEIGHT 3))
+(define UFO_X (/ WIDTH 2))
+(define TEXT_X 240)
 (define MTSCN (empty-scene WIDTH HEIGHT))
 (define UFO (overlay (circle 10 "solid" "green")
                      (ellipse 40 10 "solid" "green")))
@@ -32,7 +33,7 @@
 (check-expect (end? 50) #false)
 (check-expect (end? (+ HEIGHT 1)) #true)
 (define (end? y)
-  (>= y HEIGHT))
+  (> y HEIGHT))
 
 ; WorldState -> StatusString
 ; computes string based on value of y coord.
@@ -47,9 +48,19 @@
   (cond [(< y CLOSE) "descending"]
         [(and (>= y CLOSE) (< y HEIGHT)) "closing-in"]
         [else "landed"]))
- 
+
 ; WorldState -> Image
 ; places UFO at given height into the center of MTSCN
-(check-expect (render 11) (place-image UFO X 11 MTSCN))
+(check-expect (render 11) (place-images (list UFO (text "descending" 20 "blue"))
+                                        (list (make-posn UFO_X 11) (make-posn TEXT_X 10))
+                                        MTSCN))
+(check-expect (render 70) (place-images (list UFO (text "closing-in" 20 "blue"))
+                                        (list (make-posn UFO_X 70) (make-posn TEXT_X 10))
+                                        MTSCN))
+(check-expect (render 100) (place-images (list UFO (text "landed" 20 "blue"))
+                                        (list (make-posn UFO_X 100) (make-posn TEXT_X 10))
+                                        MTSCN))
 (define (render y)
-  (place-image UFO X y MTSCN))
+  (place-images (list UFO (text (status y) 20 "blue"))
+                (list (make-posn UFO_X y) (make-posn TEXT_X 10))
+                MTSCN))
